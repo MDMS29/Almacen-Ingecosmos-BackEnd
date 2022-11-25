@@ -1,0 +1,25 @@
+{
+  "name": "backend-almacen-ingecosmos",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MDMS29/Almacen-Ingecosmos-BackEnd.git"
+  },
+  "author": "Juan Padilla & Moises Mazo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MDMS29/Almacen-Ingecosmos-BackEnd/issues"
+  },
+  "homepage": "https://github.com/MDMS29/Almacen-Ingecosmos-BackEnd#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20"
+  }
+}
