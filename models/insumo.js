@@ -29,11 +29,7 @@ const insumoShema = mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-    },
-    token: {
-        type: String,
-        default: generarId(),
-    },
+    }
 });
 // Antes de guardar el usuario Hashear el password
 // https://www.npmjs.com/package/bcryptjs
