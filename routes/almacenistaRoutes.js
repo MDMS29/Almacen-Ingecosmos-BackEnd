@@ -1,5 +1,4 @@
-import {  
-    login,
+import { 
     mostrarRepuestos,
     nuevoRepuesto,
     editarRepuesto,
@@ -7,13 +6,14 @@ import {
 } from '../controller/almacenistaController.js';
 
 import express from 'express';
+import checkout from '../middleware/checkout.js';
 
 const router = express.Router()
 
-router.get('/', login)
-router.get('/repuestos', mostrarRepuestos)
-router.get('/nuevo-repuesto', nuevoRepuesto)
-router.get('/editar-repuesto', editarRepuesto)
-router.get('/salida-repuesto', salidaRepuesto)
+router.route('/')
+    .get(checkout, mostrarRepuestos)
+    .post(checkout, nuevoRepuesto)
+// router.get('/editar-repuesto', checkout, editarRepuesto)
+// router.get('/salida-repuesto', checkout, salidaRepuesto)
 
 export default router

@@ -2,7 +2,8 @@ import express from "express";
 import dotenv from 'dotenv';
 
 import conectarDB from './config/db.js';
-import almacenistaRouter from './routes/almacenistaRoutes.js'
+import almacenistaRoutes from './routes/almacenistaRoutes.js'
+import usuarioRoutes from './routes/usuarioRoutes.js';
 
 dotenv.config();
 
@@ -14,7 +15,9 @@ app.use(express.json());
 conectarDB()
 
 // Ruta de ejemplo
-app.use('/ingecosmos', almacenistaRouter);
+app.use('/almacen', almacenistaRoutes);
+
+app.use('/administrador', usuarioRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor funcionando en el puerto ${PORT} `);
