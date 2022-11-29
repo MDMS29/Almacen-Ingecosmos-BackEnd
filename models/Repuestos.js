@@ -20,6 +20,7 @@ const repuestoSchema = mongoose.Schema({
         type: Number,
         trim: true,
         required: true,
+        default: 0,
     },
     costo: {
         type: Number,
