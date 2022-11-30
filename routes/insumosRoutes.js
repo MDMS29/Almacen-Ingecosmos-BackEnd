@@ -15,6 +15,6 @@ router.get('/prueba', prueba);
 router.post('/', registrar);
 router.put('/:id', actualizar);
 router.delete('/:id', eliminar);
-router.get('/f', filtrar);
+router.post('/f', filtrar);
 
 export default router;
