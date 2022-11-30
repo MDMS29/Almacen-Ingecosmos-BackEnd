@@ -3,7 +3,8 @@ import {
     prueba,
     registrar,
     actualizar,
-    eliminar
+    eliminar,
+    filtrar
 } from '../controllers/insumosController.js';
 
 
@@ -14,5 +15,6 @@ router.get('/prueba', prueba);
 router.post('/', registrar);
 router.put('/:id', actualizar);
 router.delete('/:id', eliminar);
+router.get('/f', filtrar);
 
 export default router;

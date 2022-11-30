@@ -15,7 +15,17 @@ const insumoShema = mongoose.Schema({
         required: true,
         trim: true,
     },
+    tipo: {
+        type: String,
+        required: true,
+        trim: true,
+    },
     stock: {
+        type: Number,
+        required: true,
+        trim: true,
+    },
+    costo: {
         type: Number,
         required: true,
         trim: true,
