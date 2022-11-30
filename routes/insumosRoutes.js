@@ -13,8 +13,7 @@ const router = express.Router();
 // Rutas Publicas
 router.get('/prueba', prueba);
 router.post('/', registrar);
-router.put('/:id', actualizar);
-router.delete('/:id', eliminar);
-router.post('/f', filtrar);
+router.route('/:id').put(actualizar).delete(eliminar);
+router.post('/filtrar', filtrar);
 
 export default router;

@@ -10,11 +10,6 @@ const insumoShema = mongoose.Schema({
         required: true,
         trim: true,
     },
-    descripcion: {
-        type: String,
-        required: true,
-        trim: true,
-    },
     tipo: {
         type: String,
         required: true,
@@ -36,24 +31,19 @@ const insumoShema = mongoose.Schema({
         trim: true,
     },
     fila: {
-        type: String,
+        type: Number,
         required: true,
         trim: true,
+    },
+    estadoVenta: {
+        type: Boolean,
+        default: false, //No esta escaso (false) 
     }
-});
-// Antes de guardar el usuario Hashear el password
-// https://www.npmjs.com/package/bcryptjs
-// https://www.npmjs.com/package/bcrypt
-insumoShema.pre('save', async function (next) {
-    if (!this.isModified('password')) {
-        next();
-    };
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-});
-// Confirmar password del usuario, esta funcion devuelve verdadero o falso
-insumoShema.methods.comprobarPassword = async function (passwordFormulario) {
-    return await bcrypt.compare(passwordFormulario, this.password);
-};
+},
+    {
+        timestamp: true
+    }
+);
+
 const Insumo = mongoose.model('Insumo', insumoShema);
 export default Insumo;

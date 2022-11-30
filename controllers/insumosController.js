@@ -9,22 +9,38 @@ const prueba = (req, res) => {
 
 const registrar = async (req, res) => {
 
-    const { nombre, descripcion, stock, posicion, estante, fila } = req.body;
+    const { nombre, stock, tipo } = req.body;
     // Validar usuario duplicado
     // findOne busca por los diferentes atributos de la coleccion
-    const existeInsumo = await Insumo.findOne({ nombre });
+    const existeInsumo = await Insumo.findOne({ nombre }).where({tipo});
+
     if (existeInsumo) {
-        const error = new Error("Insumo ya registrado");
-        return res.status(400).json({ msg: error.message });
-    };
+         const id = existeInsumo._id
+       
+
+        const insumo = await Insumo.findById(id)
+
+        if (!insumo) {
+            const error = new Error("No se encontro insumo!")
+            return res.status(404).json({ msg: error.message })
+        }
+
+        insumo.stock = insumo.stock + stock || insumo.stock
+
+        try {
+            const insumoAlmacenado = await insumo.save()
+            res.json(insumoAlmacenado)
+        } catch (error) {
+            console.log(error)
+        }
+        return
+    } 
+
+
     try {
         const insumo = new Insumo(req.body);
         const insumoGuardado = await insumo.save();
-        // Enviar el email
-        // emailRegistro({
-        //     nombre,
-        //     token: insumoGuardado.token
-        // });
+
         res.json(insumoGuardado);
     } catch (error) {
         console.error(error.message);
@@ -46,7 +62,7 @@ const actualizar = async (req, res) => {
 
 const eliminar = async (req, res) => {
     try {
-        const eliminarInsumo = await Insumo.findByIdAndDelete(req.params.id); 
+        const eliminarInsumo = await Insumo.findByIdAndDelete(req.params.id);
         if (!eliminarInsumo) {
             const error = new Error("Token no valido");
             return res.sendStatus(404);
