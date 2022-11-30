@@ -80,17 +80,17 @@ const eliminar = async (req, res) => {
 };
 
 const filtrar = async (req, res) => {
-    const { nombre, descripcion, tipo, stock, costo, estante, fila } = req.body
+    const { nombre, tipo, stock, costo, estante, fila, estadoVenta } = req.body
 
     var respuesta
 
     if (nombre) respuesta = await Insumo.find({ nombre: { $regex: nombre } })
-    else if (descripcion) respuesta = await Insumo.find({ descripcion: { $regex: descripcion } })
     else if (tipo) respuesta = await Insumo.find({ tipo: { $regex: tipo } })
     else if (stock) respuesta = await Insumo.find().where('stock').equals(stock)
     else if (costo) respuesta = await Insumo.find().where('costo').equals(costo)
     else if (estante) respuesta = await Insumo.find().where('estante').equals(estante)
     else if (fila) respuesta = await Insumo.find().where('fila').equals(fila)
+    else if (estadoVenta) respuesta = await Insumo.find().where('estadoVenta').equals(estadoVenta)
     else respuesta = "¡No se encontraron repuestos!"
     return res.json(respuesta)
 }
