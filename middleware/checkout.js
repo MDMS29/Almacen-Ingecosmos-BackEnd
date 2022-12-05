@@ -10,7 +10,7 @@ const checkout = async (req, res, next) => {
 
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-            //Busca al usuario por id.                   Eliminar la contraseña de la respuesta recibida
+            //Busca al usuario por id.                            Eliminar la contraseña de la respuesta recibida
             req.usuario = await Usuario.findById(decoded.id).select("-password -token -createdAt -updatedAt -__v")
 
             return next()

@@ -22,7 +22,8 @@ router.post('/filtrar-repuestos', checkout, filtrarRepuestos)
 router.route('/repuesto/:id')
     .get(checkout, obtenerRepuesto)
     .put(checkout, editarRepuesto)
-    .post(checkout, salidaRepuesto)
+
+router.post('/repuesto/salida',checkout, salidaRepuesto)
 
 // router.get('/salida-repuesto', checkout, salidaRepuesto)
 

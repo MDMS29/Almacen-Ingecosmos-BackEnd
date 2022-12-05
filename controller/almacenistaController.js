@@ -1,38 +1,50 @@
 import Repuesto from "../models/Repuestos.js";
 
+import { guardarHistorial } from "./historialController.js";
+
 const nuevoRepuesto = async (req, res) => {
-    const { nombre, aseguradora, placaAuto, cantidad, costo } = req.body;
-    const existeUsuario = await Repuesto.find({ nombre }).where({ placaAuto })
 
-    if (existeUsuario.length !== 0) {
-        const id = existeUsuario[0]._id.toString()
+    for (let i = 0; i < req.body.entradaRepuestos.length; i++) {
+        
+        const { nombre, aseguradora, placaAuto, cantidad, costo } = req.body.entradaRepuestos[i];
+        const existeRepuesto = await Repuesto.find({ nombre }).where({ placaAuto })
 
-        const repuesto = await Repuesto.findById(id)
+        if (existeRepuesto[0]) {
+            const id = existeRepuesto[0]._id
 
-        if (!repuesto) {
-            const error = new Error("No se encontro repuesto!")
-            return res.status(404).json({ msg: error.message })
+            const repuesto = await Repuesto.findById(id)
+
+            if (!repuesto) {
+                const error = new Error("No se encontro repuesto!")
+                // return res.status(404).json({ msg: error.message })
+            }
+
+            repuesto.cantidad = repuesto.cantidad + cantidad || repuesto.cantidad
+
+            try {
+                const respuestoSave = await repuesto.save()
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            try {
+                //Crea una instancia de usuario para insertar.
+                const repuesto = new Repuesto(req.body.entradaRepuestos[i])
+                await repuesto.save()
+                res.json({ msg: "¡Repuesto guardado correctamente!" });
+            } catch (error) {
+                console.log(error);
+            }
         }
 
-        repuesto.cantidad = repuesto.cantidad + cantidad || repuesto.cantidad
-
-        try {
-            const repuestoAlmacenado = await repuesto.save()
-            res.json(repuestoAlmacenado)
-        } catch (error) {
-            console.log(error)
-        }
-        return
     }
-
-    try {
-        //Crea una instancia de usuario para insertar.
-        const repuesto = new Repuesto(req.body)
-        await repuesto.save()
-        res.json({ msg: "¡Repuesto guardado correctamente!" });
-    } catch (error) {
-        console.log(error);
+    const historial = {
+        tipo: "Entrada",
+        repuestoSalida: req.body.entradaRepuestos
     }
+    return guardarHistorial(historial)
+
+
 }
 
 const mostrarRepuestos = async (req, res) => {
@@ -98,35 +110,46 @@ const editarRepuesto = async (req, res) => {
 }
 
 const salidaRepuesto = async (req, res) => {
-    const { id } = req.params
+    if (req.body.repuestoSalida.length) {
+        for (let i = 0; i < req.body.repuestoSalida.length; i++) {
+            const id = req.body.repuestoSalida[i]._id
+            const cantidad = req.body.repuestoSalida[i].cantidadSalida
 
-    //Buscar el proyecto por su id
-    const repuesto = await Repuesto.findById(id).select("cantidad")
+            const repuesto = await Repuesto.findById(id)
 
-    if (!repuesto) {
-        const error = new Error("¡Repuesto no encontrado!")
-        return res.status(404).json({ msg: error.message })
-    }
+            if (!repuesto) {
+                const error = new Error("¡Repuesto no encontrado!")
+                return res.status(404).json({ msg: error.message })
+            }
 
-    if (repuesto.cantidad == req.body.cantidad) {
-        repuesto.cantidad = 0
-        if (repuesto.cantidad == 0) {
-            await repuesto.deleteOne()
-            res.json({ msg: "¡Repuesto Eliminado!" })
+            repuesto.cantidad = repuesto.cantidad - cantidad || repuesto.cantidad
+
+            try {
+                if (repuesto.cantidad == cantidad) {
+                    repuesto.cantidad = 0
+                    if (repuesto.cantidad == 0) {
+                        await repuesto.deleteOne()
+                        res.json({ msg: "¡Repuesto Eliminado!" })
+                    }
+                    return
+                }
+
+                const repuestoAlmacenado = await repuesto.save()
+
+            } catch (error) {
+                console.log(error)
+            }
         }
-        return
+        const historial = {
+            tipo: req.body.tipo,
+            nombreSalida: req.body.nombreSalida,
+            repuestoSalida: req.body.repuestoSalida
+        }
+        return guardarHistorial(historial)
     }
-
-    repuesto.cantidad = repuesto.cantidad - req.body.cantidad || repuesto.cantidad
-
-    try {
-        const repuestoAlmacenado = await repuesto.save()
-        res.json(repuestoAlmacenado)
-
-    } catch (error) {
-        console.log(error)
-    }
+    res.json({ msg: "¡Debe agregar repuestos para realizar una salida!" })
 }
+
 
 export {
     mostrarRepuestos,
