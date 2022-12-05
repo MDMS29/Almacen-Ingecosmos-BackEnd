@@ -5,7 +5,7 @@ import { guardarHistorial } from "./historialController.js";
 const nuevoRepuesto = async (req, res) => {
 
     for (let i = 0; i < req.body.entradaRepuestos.length; i++) {
-        
+
         const { nombre, aseguradora, placaAuto, cantidad, costo } = req.body.entradaRepuestos[i];
         const existeRepuesto = await Repuesto.find({ nombre }).where({ placaAuto })
 
@@ -111,6 +111,7 @@ const editarRepuesto = async (req, res) => {
 
 const salidaRepuesto = async (req, res) => {
     if (req.body.repuestoSalida.length) {
+        var total = 0
         for (let i = 0; i < req.body.repuestoSalida.length; i++) {
             const id = req.body.repuestoSalida[i]._id
             const cantidad = req.body.repuestoSalida[i].cantidadSalida
@@ -123,6 +124,9 @@ const salidaRepuesto = async (req, res) => {
             }
 
             repuesto.cantidad = repuesto.cantidad - cantidad || repuesto.cantidad
+
+            let subTotal = cantidad * repuesto.costo
+            total = total + subTotal
 
             try {
                 if (repuesto.cantidad == cantidad) {
@@ -143,7 +147,8 @@ const salidaRepuesto = async (req, res) => {
         const historial = {
             tipo: req.body.tipo,
             nombreSalida: req.body.nombreSalida,
-            repuestoSalida: req.body.repuestoSalida
+            repuestoSalida: req.body.repuestoSalida,
+            totalSalida : total
         }
         return guardarHistorial(historial)
     }

@@ -16,6 +16,11 @@ const historialSchema = mongoose.Schema({
             ref: 'Repuesto',
         }
     ],
+    totalSalida: {
+        type: Number,
+        trim: true,
+        required: true,
+    },
     fecha: {
         type: Date,
         default: Date.now(),
