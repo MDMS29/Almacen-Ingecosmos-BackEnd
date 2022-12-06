@@ -1,5 +1,5 @@
 import Insumo from "../models/insumo.js";
-
+import { guardarHistorial } from "./historialController.js";
 
 const prueba = (req, res) => {
     res.send({
@@ -49,7 +49,7 @@ const prueba = (req, res) => {
 
 
 const registrar = async (req, res) => {
-
+ console.log(req.body.entradaInsumos)
     for (let i = 0; i < req.body.entradaInsumos.length; i++) {
 
         const { nombre, tipo, stock, costo, estadoVenta } = req.body.entradaInsumos[i];
@@ -141,36 +141,37 @@ const filtrar = async (req, res) => {
     return res.json(respuesta)
 }
 
-const salida = async (req, res) => {
+const salida = async (req, res) => { 
     if (req.body.insumoSalida.length) {
         var total = 0
         for (let i = 0; i < req.body.insumoSalida.length; i++) {
             const id = req.body.insumoSalida[i]._id
-            const stock = req.body.insumoSalida[i].insumoSalida
-
-            const repuesto = await Insumo.findById(id)
-
-            if (!Insumo) {
+            const stockSalida = req.body.insumoSalida[i].cantidadSalida
+            
+            const insumo = await Insumo.findById(id)
+            
+            if (!insumo) {
                 const error = new Error("¡Insumo no encontrado!")
                 return res.status(404).json({ msg: error.message })
             }
-
-            Insumo.stock = Insumo.stock - stock || Insumo.stock
-
-            let subTotal = stock * Insumo.costo
-            total = total + subTotal
-
+            
+            insumo.stock = insumo.stock - stockSalida || insumo.stock
+            
+            let subTotal = stockSalida * insumo.costo
+            
+            total = total + subTotal 
+            
             try {
-                if (Insumo.stock == stock) {
-                    Insumo.stock = 0
-                    if (Insumo.cantidad == 0) {
+                if (insumo.stock == stockSalida) {
+                    insumo.stock = 0
+                    if (insumo.cantidad == 0) {
                         await Insumo.deleteOne()
                         res.json({ msg: "¡Insumo Eliminado!" })
                     }
-                    return
+                    // return
                 }
-
-                const insumoAlmacenado = await Insumo.save()
+                
+                const insumoAlmacenado = await insumo.save()
 
             } catch (error) {
                 console.log(error)
@@ -179,7 +180,7 @@ const salida = async (req, res) => {
         const historial = {
             tipo: req.body.tipo,
             nombreSalida: req.body.nombreSalida,
-            repuestoSalida: req.body.repuestoSalida,
+            insumoSalida: req.body.insumoSalida,
             totalSalida : total
         }
         return guardarHistorial(historial)

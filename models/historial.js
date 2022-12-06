@@ -13,13 +13,12 @@ const historialSchema = mongoose.Schema({
     insumoSalida: [ //Corchetes para indicar que habrá varios
         {
             type: Object,
-            ref: 'Insumo',
         }
     ],
     totalSalida: {
         type: Number,
         trim: true,
-        required: true,
+        // required: true,
     },
     fecha: {
         type: Date,
