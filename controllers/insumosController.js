@@ -7,45 +7,91 @@ const prueba = (req, res) => {
     })
 };
 
-const registrar = async (req, res) => {
+// const registrar = async (req, res) => {
 
-    const { nombre, stock, tipo } = req.body;
-    // Validar usuario duplicado
-    // findOne busca por los diferentes atributos de la coleccion
-    const existeInsumo = await Insumo.findOne({ nombre }).where({tipo});
+//     const { nombre, stock, tipo } = req.body;
+//     // Validar usuario duplicado
+//     // findOne busca por los diferentes atributos de la coleccion
+//     const existeInsumo = await Insumo.findOne({ nombre }).where({tipo});
 
-    if (existeInsumo) {
-         const id = existeInsumo._id
+//     if (existeInsumo) {
+//          const id = existeInsumo._id
        
 
-        const insumo = await Insumo.findById(id)
+//         const insumo = await Insumo.findById(id)
 
-        if (!insumo) {
-            const error = new Error("No se encontro insumo!")
-            return res.status(404).json({ msg: error.message })
+//         if (!insumo) {
+//             const error = new Error("No se encontro insumo!")
+//             return res.status(404).json({ msg: error.message })
+//         }
+
+//         insumo.stock = insumo.stock + stock || insumo.stock
+
+//         try {
+//             const insumoAlmacenado = await insumo.save()
+//             res.json(insumoAlmacenado)
+//         } catch (error) {
+//             console.log(error)
+//         }
+//         return
+//     } 
+
+
+//     try {
+//         const insumo = new Insumo(req.body);
+//         const insumoGuardado = await insumo.save();
+
+//         res.json(insumoGuardado);
+//     } catch (error) {
+//         console.error(error.message);
+//     };
+// };
+
+
+const registrar = async (req, res) => {
+
+    for (let i = 0; i < req.body.entradaInsumos.length; i++) {
+
+        const { nombre, tipo, stock, costo, estadoVenta } = req.body.entradaInsumos[i];
+        const existeInsumo = await Insumo.find({ nombre }).where({ tipo })
+
+        if (existeInsumo[0]) {
+            const id = existeInsumo[0]._id
+
+            const insumo = await Insumo.findById(id)
+
+            if (!insumo) {
+                const error = new Error("No se encontro repuesto!")
+                // return res.status(404).json({ msg: error.message })
+            }
+
+            insumo.stock = insumo.stock + stock || insumo.stock
+
+            try {
+                const insumoSave = await insumo.save()
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            try {
+                //Crea una instancia de usuario para insertar.
+                const insumo = new Insumo(req.body.entradaInsumos[i])
+                await insumo.save()
+                res.json({ msg: "¡Repuesto guardado correctamente!" });
+            } catch (error) {
+                console.log(error);
+            }
         }
 
-        insumo.stock = insumo.stock + stock || insumo.stock
-
-        try {
-            const insumoAlmacenado = await insumo.save()
-            res.json(insumoAlmacenado)
-        } catch (error) {
-            console.log(error)
-        }
-        return
-    } 
+    }
+     const historial = {
+         tipo: "Entrada",
+         insumoSalida: req.body.entradaInsumos
+     }
+     return guardarHistorial(historial)
 
 
-    try {
-        const insumo = new Insumo(req.body);
-        const insumoGuardado = await insumo.save();
-
-        res.json(insumoGuardado);
-    } catch (error) {
-        console.error(error.message);
-    };
-};
+}
 
 const actualizar = async (req, res) => {
     try {
@@ -95,10 +141,57 @@ const filtrar = async (req, res) => {
     return res.json(respuesta)
 }
 
+const salida = async (req, res) => {
+    if (req.body.insumoSalida.length) {
+        var total = 0
+        for (let i = 0; i < req.body.insumoSalida.length; i++) {
+            const id = req.body.insumoSalida[i]._id
+            const stock = req.body.insumoSalida[i].insumoSalida
+
+            const repuesto = await Insumo.findById(id)
+
+            if (!Insumo) {
+                const error = new Error("¡Insumo no encontrado!")
+                return res.status(404).json({ msg: error.message })
+            }
+
+            Insumo.stock = Insumo.stock - stock || Insumo.stock
+
+            let subTotal = stock * Insumo.costo
+            total = total + subTotal
+
+            try {
+                if (Insumo.stock == stock) {
+                    Insumo.stock = 0
+                    if (Insumo.cantidad == 0) {
+                        await Insumo.deleteOne()
+                        res.json({ msg: "¡Insumo Eliminado!" })
+                    }
+                    return
+                }
+
+                const insumoAlmacenado = await Insumo.save()
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        const historial = {
+            tipo: req.body.tipo,
+            nombreSalida: req.body.nombreSalida,
+            repuestoSalida: req.body.repuestoSalida,
+            totalSalida : total
+        }
+        return guardarHistorial(historial)
+    }
+    res.json({ msg: "¡Debe agregar insumos para realizar una salida!" })
+}
+
 export {
     prueba,
     registrar,
     actualizar,
     eliminar,
-    filtrar
+    filtrar,
+    salida
 };
