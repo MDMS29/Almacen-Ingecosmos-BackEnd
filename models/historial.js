@@ -10,9 +10,10 @@ const historialSchema = mongoose.Schema({
         type: String,
         trim: true,
     },
-    insumoSalida: [ //Corchetes para indicar que habrá varios
+    articulos: [ //Corchetes para indicar que habrá varios
         {
             type: Object,
+            ref: 'Insumo'
         }
     ],
     totalSalida: {

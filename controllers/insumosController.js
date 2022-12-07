@@ -86,7 +86,7 @@ const registrar = async (req, res) => {
     }
      const historial = {
          tipo: "Entrada",
-         insumoSalida: req.body.entradaInsumos
+         articulos: req.body.entradaInsumos
      }
      return guardarHistorial(historial)
 
@@ -178,9 +178,10 @@ const salida = async (req, res) => {
             }
         }
         const historial = {
-            tipo: req.body.tipo,
+            // tipo: req.body.tipo
+            tipo: "Salida",
             nombreSalida: req.body.nombreSalida,
-            insumoSalida: req.body.insumoSalida,
+            articulos: req.body.insumoSalida,
             totalSalida : total
         }
         return guardarHistorial(historial)
