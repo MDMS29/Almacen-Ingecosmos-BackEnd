@@ -40,7 +40,7 @@ const nuevoRepuesto = async (req, res) => {
     }
     const historial = {
         tipo: "Entrada",
-        repuestoSalida: req.body.entradaRepuestos
+        articulos: req.body.entradaRepuestos
     }
     return guardarHistorial(historial)
 
@@ -145,9 +145,9 @@ const salidaRepuesto = async (req, res) => {
             }
         }
         const historial = {
-            tipo: req.body.tipo,
+            tipo: "Salida",
             nombreSalida: req.body.nombreSalida,
-            repuestoSalida: req.body.repuestoSalida,
+            articulos: req.body.repuestoSalida,
             totalSalida : total
         }
         return guardarHistorial(historial)

@@ -10,7 +10,7 @@ const historialSchema = mongoose.Schema({
         type: String,
         trim: true,
     },
-    repuestoSalida: [ //Corchetes para indicar que habrá varios
+    articulos: [ //Corchetes para indicar que habrá varios
         {
             type: Object,
             ref: 'Repuesto',
@@ -19,7 +19,6 @@ const historialSchema = mongoose.Schema({
     totalSalida: {
         type: Number,
         trim: true,
-        required: true,
     },
     fecha: {
         type: Date,
