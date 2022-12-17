@@ -9,7 +9,6 @@ import {
 
 import express from 'express';
 import checkout from '../middleware/checkout.js';
-import { get } from 'mongoose';
 
 const router = express.Router()
 

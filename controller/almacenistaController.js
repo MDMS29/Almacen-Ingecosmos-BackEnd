@@ -4,44 +4,45 @@ import { guardarHistorial } from "./historialController.js";
 
 const nuevoRepuesto = async (req, res) => {
 
-    for (let i = 0; i < req.body.entradaRepuestos.length; i++) {
+    let repuesto
+    let articulos = []
 
+    for (let i = 0; i < req.body.entradaRepuestos.length; i++) {
         const { nombre, aseguradora, placaAuto, cantidad, costo } = req.body.entradaRepuestos[i];
         const existeRepuesto = await Repuesto.find({ nombre }).where({ placaAuto })
 
         if (existeRepuesto[0]) {
             const id = existeRepuesto[0]._id
 
-            const repuesto = await Repuesto.findById(id)
-
-            if (!repuesto) {
-                const error = new Error("No se encontro repuesto!")
-                // return res.status(404).json({ msg: error.message })
-            }
+            repuesto = await Repuesto.findById(id)
 
             repuesto.cantidad = repuesto.cantidad + cantidad || repuesto.cantidad
-
             try {
-                const respuestoSave = await repuesto.save()
+                const repuestoAlmacenado = await repuesto.save()
+
+                articulos.push({ id: repuestoAlmacenado._id })
             } catch (error) {
                 console.log(error)
             }
         } else {
             try {
-                //Crea una instancia de usuario para insertar.
-                const repuesto = new Repuesto(req.body.entradaRepuestos[i])
-                await repuesto.save()
-                res.json({ msg: "¡Repuesto guardado correctamente!" });
+                const repuestoAlmacenado = new Repuesto(req.body.entradaRepuestos[i])
+                await repuestoAlmacenado.save()
+
+                articulos.push({ id: repuestoAlmacenado._id })
             } catch (error) {
-                console.log(error);
+                error = new Error("Error al guardar repuesto!")
+                return res.status(404).json({ msg: error.message })
             }
         }
 
     }
-    // const historial = {
-    //     tipo: "Entrada",
-    //     articulos: req.body.entradaRepuestos
-    // }
+    res.json(articulos)
+
+    const historial = {
+        tipo: "Entrada",
+        articulos
+    }
     return guardarHistorial(historial)
 
 
@@ -110,6 +111,10 @@ const editarRepuesto = async (req, res) => {
 }
 
 const salidaRepuesto = async (req, res) => {
+
+    let repuesto
+    let articulos = []
+
     if (req.body.repuestoSalida.length) {
         var total = 0
         for (let i = 0; i < req.body.repuestoSalida.length; i++) {
@@ -139,20 +144,23 @@ const salidaRepuesto = async (req, res) => {
                 }
 
                 const repuestoAlmacenado = await repuesto.save()
+                articulos.push(repuestoAlmacenado._id)
 
             } catch (error) {
                 console.log(error)
             }
         }
-        // const historial = {
-        //     tipo: "Salida",
-        //     nombreSalida: req.body.nombreSalida,
-        //     articulos: req.body.repuestoSalida,
-        //     totalSalida : total
-        // }
+        const historial = {
+            tipo: "Salida",
+            nombreSalida: req.body.nombreSalida,
+            articulos,
+            totalSalida : total
+        }
         return guardarHistorial(historial)
+    } else {
+        const error = new Error("¡Debe agregar repuestos para realizar una salida!")
+        return res.status(404).json({ msg: error.message })
     }
-    res.json({ msg: "¡Debe agregar repuestos para realizar una salida!" })
 }
 
 

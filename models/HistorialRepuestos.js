@@ -13,9 +13,14 @@ const historialRepuestosSchema = mongoose.Schema({
     articulos: [ //Corchetes para indicar que habrá varios
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Repuesto',
+            ref: 'Repuesto'
+        },
+        {
+            type: Number,
+            trim: true,
         }
     ],
+   
     totalSalida: {
         type: Number,
         trim: true,

@@ -1,4 +1,5 @@
 import HistorialRepuestos from "../models/HistorialRepuestos.js"
+
 const guardarHistorial = async (req, res) => {
     try {
         await HistorialRepuestos.create(req)
@@ -7,4 +8,9 @@ const guardarHistorial = async (req, res) => {
     }
 }
 
-export { guardarHistorial }
+const mostrarHistorialRepuestos = async (req, res) => {
+    const historialRepuestos = await HistorialRepuestos.find().populate({ path: 'articulos', select : '-createdAt -updatedAt -__v'})   
+    res.json(historialRepuestos)
+}
+
+export { guardarHistorial, mostrarHistorialRepuestos }
