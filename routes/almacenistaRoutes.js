@@ -20,7 +20,6 @@ router.route('/')
 router.post('/filtrar-repuestos', checkout, filtrarRepuestos)
 
 router.route('/repuesto/:id')
-    .get(checkout, obtenerRepuesto)
     .put(checkout, editarRepuesto)
 
 router.post('/repuesto/salida',checkout, salidaRepuesto)

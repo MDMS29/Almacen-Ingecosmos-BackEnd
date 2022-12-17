@@ -38,10 +38,10 @@ const nuevoRepuesto = async (req, res) => {
         }
 
     }
-    const historial = {
-        tipo: "Entrada",
-        articulos: req.body.entradaRepuestos
-    }
+    // const historial = {
+    //     tipo: "Entrada",
+    //     articulos: req.body.entradaRepuestos
+    // }
     return guardarHistorial(historial)
 
 
@@ -144,12 +144,12 @@ const salidaRepuesto = async (req, res) => {
                 console.log(error)
             }
         }
-        const historial = {
-            tipo: "Salida",
-            nombreSalida: req.body.nombreSalida,
-            articulos: req.body.repuestoSalida,
-            totalSalida : total
-        }
+        // const historial = {
+        //     tipo: "Salida",
+        //     nombreSalida: req.body.nombreSalida,
+        //     articulos: req.body.repuestoSalida,
+        //     totalSalida : total
+        // }
         return guardarHistorial(historial)
     }
     res.json({ msg: "¡Debe agregar repuestos para realizar una salida!" })

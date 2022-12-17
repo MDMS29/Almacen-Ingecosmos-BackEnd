@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const historialSchema = mongoose.Schema({
+const historialRepuestosSchema = mongoose.Schema({
     tipo : {
         type: String,
         required: true,
@@ -12,7 +12,7 @@ const historialSchema = mongoose.Schema({
     },
     articulos: [ //Corchetes para indicar que habrá varios
         {
-            type: Object,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Repuesto',
         }
     ],
@@ -27,6 +27,6 @@ const historialSchema = mongoose.Schema({
 }
 )
 
-const Historial = mongoose.model('Historial', historialSchema)
+const HistorialRepuestos = mongoose.model('HistorialRepuestos', historialRepuestosSchema)
 
-export default Historial
+export default HistorialRepuestos
