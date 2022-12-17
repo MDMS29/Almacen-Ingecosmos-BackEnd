@@ -9,7 +9,7 @@ const guardarHistorial = async (req, res) => {
 }
 
 const mostrarHistorialRepuestos = async (req, res) => {
-    const historialRepuestos = await HistorialRepuestos.find().populate({ path: 'articulos', select : '-createdAt -updatedAt -__v'})   
+    const historialRepuestos = await HistorialRepuestos.find().populate({ path: 'articulos', select : '-createdAt -updatedAt -__v -cantidad'})   
     res.json(historialRepuestos)
 }
 

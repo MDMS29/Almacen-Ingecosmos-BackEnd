@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 const historialRepuestosSchema = mongoose.Schema({
-    tipo : {
+    tipo: {
         type: String,
         required: true,
-        enum : ['Entrada', 'Salida'],
+        enum: ['Entrada', 'Salida'],
     },
     nombreSalida: {
         type: String,
@@ -14,13 +14,14 @@ const historialRepuestosSchema = mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Repuesto'
-        },
-        {
-            type: Number,
-            trim: true,
         }
     ],
-   
+    cantidadS: [
+        {
+            type: Number,
+            trim: true
+        }
+    ],
     totalSalida: {
         type: Number,
         trim: true,

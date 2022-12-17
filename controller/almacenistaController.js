@@ -6,6 +6,7 @@ const nuevoRepuesto = async (req, res) => {
 
     let repuesto
     let articulos = []
+    let cantidadS = []
 
     for (let i = 0; i < req.body.entradaRepuestos.length; i++) {
         const { nombre, aseguradora, placaAuto, cantidad, costo } = req.body.entradaRepuestos[i];
@@ -20,7 +21,11 @@ const nuevoRepuesto = async (req, res) => {
             try {
                 const repuestoAlmacenado = await repuesto.save()
 
-                articulos.push({ id: repuestoAlmacenado._id })
+                //Almacenar los id y cantidades respectivas
+                articulos.push(repuestoAlmacenado._id)
+                cantidadS.push(cantidad)
+
+                res.json(repuestoAlmacenado)
             } catch (error) {
                 console.log(error)
             }
@@ -28,8 +33,12 @@ const nuevoRepuesto = async (req, res) => {
             try {
                 const repuestoAlmacenado = new Repuesto(req.body.entradaRepuestos[i])
                 await repuestoAlmacenado.save()
-
-                articulos.push({ id: repuestoAlmacenado._id })
+                
+                //Almacenar los id y cantidades respectivas
+                articulos.push(repuestoAlmacenado._id)
+                cantidadS.push(cantidad)
+                
+                res.json(repuestoAlmacenado)
             } catch (error) {
                 error = new Error("Error al guardar repuesto!")
                 return res.status(404).json({ msg: error.message })
@@ -37,11 +46,11 @@ const nuevoRepuesto = async (req, res) => {
         }
 
     }
-    res.json(articulos)
 
     const historial = {
         tipo: "Entrada",
-        articulos
+        articulos, 
+        cantidadS
     }
     return guardarHistorial(historial)
 
@@ -112,8 +121,8 @@ const editarRepuesto = async (req, res) => {
 
 const salidaRepuesto = async (req, res) => {
 
-    let repuesto
     let articulos = []
+    let cantidadS = []
 
     if (req.body.repuestoSalida.length) {
         var total = 0
@@ -138,14 +147,18 @@ const salidaRepuesto = async (req, res) => {
                     repuesto.cantidad = 0
                     if (repuesto.cantidad == 0) {
                         await repuesto.deleteOne()
-                        res.json({ msg: "¡Repuesto Eliminado!" })
+                        res.json({ msg: `¡Repuesto "${repuesto.nombre}" Eliminado! `})
                     }
                     return
                 }
 
                 const repuestoAlmacenado = await repuesto.save()
-                articulos.push(repuestoAlmacenado._id)
 
+                //Almacenar los id y cantidades respectivas
+                articulos.push(repuestoAlmacenado._id) 
+                cantidadS.push(cantidad)
+                
+                res.json(repuestoAlmacenado)
             } catch (error) {
                 console.log(error)
             }
@@ -154,6 +167,7 @@ const salidaRepuesto = async (req, res) => {
             tipo: "Salida",
             nombreSalida: req.body.nombreSalida,
             articulos,
+            cantidadS,
             totalSalida : total
         }
         return guardarHistorial(historial)
