@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import conectarDB from './config/db.js';
 import insumosRoutes from './routes/insumosRoutes.js';
+import historialRoutes from "./routes/historialRoutes.js"
 
 const PORT = process.env.PORT || 4000;
 dotenv.config();
@@ -30,7 +31,8 @@ conectarDB();
 // app.use(cors(corsOptions));
 
 //gestion insumos
-app.use('/api/insumos', insumosRoutes);
+app.use('/insumos', insumosRoutes);
+app.use('/historial', historialRoutes);
 
 
 app.listen(PORT, () => {

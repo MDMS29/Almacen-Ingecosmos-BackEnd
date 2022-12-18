@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const historialSchema = mongoose.Schema({
+const historialInsumoSchema = mongoose.Schema({
     tipo : {
         type: String,
         required: true,
@@ -12,8 +12,14 @@ const historialSchema = mongoose.Schema({
     },
     articulos: [ //Corchetes para indicar que habrá varios
         {
-            type: Object,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Insumo'
+        }
+    ],
+    cantidadS: [
+        {
+            type: Number,
+            trim: true
         }
     ],
     totalSalida: {
@@ -28,6 +34,6 @@ const historialSchema = mongoose.Schema({
 }
 )
 
-const Historial = mongoose.model('Historial', historialSchema)
+const HistorialInsumo = mongoose.model('historialInsumo', historialInsumoSchema)
 
-export default Historial
+export default HistorialInsumo

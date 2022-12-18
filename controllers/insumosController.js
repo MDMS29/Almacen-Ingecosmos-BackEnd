@@ -49,6 +49,11 @@ const prueba = (req, res) => {
 
 
 const registrar = async (req, res) => {
+
+    let insumo 
+    let articulos = []
+    let cantidadS = []
+
  console.log(req.body.entradaInsumos)
     for (let i = 0; i < req.body.entradaInsumos.length; i++) {
 
@@ -58,39 +63,46 @@ const registrar = async (req, res) => {
         if (existeInsumo[0]) {
             const id = existeInsumo[0]._id
 
-            const insumo = await Insumo.findById(id)
-
-            if (!insumo) {
-                const error = new Error("No se encontro repuesto!")
-                // return res.status(404).json({ msg: error.message })
-            }
+             insumo = await Insumo.findById(id)
 
             insumo.stock = insumo.stock + stock || insumo.stock
 
             try {
                 const insumoSave = await insumo.save()
+                articulos.push(insumoSave._id)
+                cantidadS.push(stock)
+
+                res.json(insumoSave)
+
             } catch (error) {
                 console.log(error)
             }
         } else {
             try {
                 //Crea una instancia de usuario para insertar.
-                const insumo = new Insumo(req.body.entradaInsumos[i])
-                await insumo.save()
+                const insumoSave = new Insumo(req.body.entradaInsumos[i])
+                await insumoSave.save()
+
+                articulos.push(insumoSave._id)
+                cantidadS.push(stock)
+
+                res.json(insumoSave)
+
                 res.json({ msg: "¡Repuesto guardado correctamente!" });
             } catch (error) {
                 console.log(error);
+                error = new Error("Error al guardar repuesto!")
+                return res.status(404).json({ msg: error.message })
             }
         }
 
     }
      const historial = {
          tipo: "Entrada",
-         articulos: req.body.entradaInsumos
+         articulos,
+         cantidadS
      }
      return guardarHistorial(historial)
-
-
 }
 
 const actualizar = async (req, res) => {
@@ -142,6 +154,10 @@ const filtrar = async (req, res) => {
 }
 
 const salida = async (req, res) => { 
+
+    let articulos = []
+    let cantidadS = [] 
+
     if (req.body.insumoSalida.length) {
         var total = 0
         for (let i = 0; i < req.body.insumoSalida.length; i++) {
@@ -173,6 +189,10 @@ const salida = async (req, res) => {
                 
                 const insumoAlmacenado = await insumo.save()
 
+                articulos.push(insumoAlmacenado._id) 
+                cantidadS.push(stock)
+
+                res.json(insumoAlmacenado)
             } catch (error) {
                 console.log(error)
             }
@@ -181,12 +201,15 @@ const salida = async (req, res) => {
             // tipo: req.body.tipo
             tipo: "Salida",
             nombreSalida: req.body.nombreSalida,
-            articulos: req.body.insumoSalida,
+            articulos,
+            cantidadS,
             totalSalida : total
         }
         return guardarHistorial(historial)
+    } else {
+        const error = new Error("¡Debe agregar repuestos para realizar una salida!")
+        return res.status(404).json({ msg: error.message })
     }
-    res.json({ msg: "¡Debe agregar insumos para realizar una salida!" })
 }
 
 export {
